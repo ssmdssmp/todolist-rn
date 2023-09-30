@@ -27,7 +27,10 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-
+import {useAppSelector} from './App/store/types';
+import store from './App/store/store';
+import {Provider} from 'react-redux';
+import {getTasksSelector} from './App/store/modules/tasks/selector';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -63,7 +66,6 @@ function App(): JSX.Element {
   const [tasks, setTasks] = useState([]);
   const tasksRef = useRef(null);
   tasksRef.current = tasks;
-
   useEffect(() => {
     if (Platform.OS === 'ios') {
       auth()
@@ -86,20 +88,21 @@ function App(): JSX.Element {
         });
       });
   }, []);
-
+  const ReduxExample = () => {
+    const {tasks} = useAppSelector(getTasksSelector);
+    return (
+      <View>
+        <Text>{tasks.length}</Text>
+      </View>
+    );
+  };
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
+    <Provider store={store}>
+      <SafeAreaView style={backgroundStyle}>
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -109,8 +112,9 @@ function App(): JSX.Element {
               return <Text>{item.title}</Text>;
             })}
         </View>
-      </ScrollView>
-    </SafeAreaView>
+        <ReduxExample />
+      </SafeAreaView>
+    </Provider>
   );
 }
 
