@@ -6,7 +6,14 @@ const initialState = {
 export const tasksReducer = createSlice({
   name: 'chat',
   initialState,
-  reducers: {},
+  reducers: {
+    setTasks: (state, {payload}) => {
+      state.tasks = payload;
+    },
+    resetTasks: state => {
+      state.tasks = [];
+    },
+  },
 });
 export const tasksActions = tasksReducer.actions;
 export default tasksReducer.reducer;
