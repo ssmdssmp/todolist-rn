@@ -5,9 +5,9 @@
  * @format
  */
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 
-import {SafeAreaView, Text, useColorScheme, View, Platform} from 'react-native';
+import {Platform, Text, View} from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -16,36 +16,42 @@ import store from './App/store/store';
 import {Provider} from 'react-redux';
 import {getTasksSelector} from './App/store/modules/tasks/selector';
 import {tasksActions} from './App/store/modules';
+import {RootNavigator} from './App/navigation';
 
 function App(): JSX.Element {
   useEffect(() => {
-    if (Platform.OS === 'ios') {
-      auth()
-        .createUserWithEmailAndPassword('test44@gmail.com', '123123132')
-        .then(res => console.log('ios', res))
-        .catch(err => console.log(err));
-    } else {
-      auth()
-        .createUserWithEmailAndPassword('test220@gmail.com', '123123132')
-        .then(res => console.log('android', res))
+    if (Platform.OS === 'android') {
+      firestore()
+        .collection('tasks')
+        .get()
+        .then(res => {
+          res.docs.map(item => {
+            console.log(item.data());
+            // dispatch(tasksActions.setTasks([item.data(), ...tasksRef.current]));
+          });
+        })
         .catch(err => console.log(err));
     }
   }, []);
+  // useEffect(() => {
+  //   if (Platform.OS === 'ios') {
+  //     auth()
+  //       .createUserWithEmailAndPassword('test44@gmail.com', '123123132')
+  //       .then(res => console.log('ios', res))
+  //       .catch(err => console.log(err));
+  //   } else {
+  //     auth()
+  //       .createUserWithEmailAndPassword('test220@gmail.com', '123123132')
+  //       .then(res => console.log('android', res))
+  //       .catch(err => console.log(err));
+  //   }
+  // }, []);
   const ReduxExample = () => {
     const {tasks} = useAppSelector(getTasksSelector);
     const dispatch = useAppDispatch();
     const tasksRef = useRef(null);
     tasksRef.current = tasks;
-    // useEffect(() => {
-    //   firestore()
-    //     .collection('tasks')
-    //     .get()
-    //     .then(res => {
-    //       res.docs.map(item => {
-    //         dispatch(tasksActions.setTasks([item.data(), ...tasksRef.current]));
-    //       });
-    //     });
-    // }, []);
+    useEffect(() => {}, []);
     return (
       <View>
         {tasksRef.current &&
@@ -59,10 +65,7 @@ function App(): JSX.Element {
 
   return (
     <Provider store={store}>
-      <SafeAreaView>
-        <View></View>
-        <ReduxExample />
-      </SafeAreaView>
+      <RootNavigator />
     </Provider>
   );
 }
