@@ -1,8 +1,8 @@
 export interface ITask {
   isDone: boolean;
   title: string;
-  desc: string;
   creationDate: string;
+  id?: string;
 }
 
 export type FirebaseUser = {

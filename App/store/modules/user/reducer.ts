@@ -1,3 +1,4 @@
+import {FirebaseUser} from '@/types';
 import {createSlice} from '@reduxjs/toolkit';
 import {IUserState} from './types';
 
@@ -10,27 +11,52 @@ export const userReducer = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    tryLogin: () => {},
-    loginSuccess: (state, action) => {
-      state.user = action.payload;
+    tryLogin: ({payload}: {payload: {email: string; password: string}}) => {},
+    loginSuccess: (state, {payload}: {payload: FirebaseUser}) => {
+      state.user = payload;
       state.error = null;
     },
-    loginFailure: (state, action) => {
+    loginFailure: (state, {payload}: {payload: string}) => {
       state.user = null;
-      state.error = action.payload;
+      state.error = payload;
     },
-    tryRegister: () => {},
-    registerSuccess: (state, action) => {
-      state.user = action.payload;
+    tryRegister: ({
+      payload,
+    }: {
+      payload: {email: string; password: string};
+    }) => {},
+    registerSuccess: (state, {payload}: {payload: FirebaseUser}) => {
+      state.user = payload;
       state.error = null;
     },
-    registerFailure: (state, action) => {
+    registerFailure: (state, {payload}: {payload: string}) => {
       state.user = null;
-      state.error = action.payload;
+      state.error = payload;
     },
     signOut: state => {
       state.user = null;
       state.error = null;
+    },
+    clearError: state => {
+      state.error = null;
+    },
+    tryLogout: () => {},
+    logoutSuccess: state => {
+      state.user = null;
+      state.error = null;
+    },
+    logoutFailure: (state, {payload}: {payload: string}) => {
+      state.user = null;
+      state.error = payload;
+    },
+    tryLoginWithGoogle: () => {},
+    loginWithGoogleSuccess: (state, {payload}: {payload: FirebaseUser}) => {
+      state.user = payload;
+      state.error = null;
+    },
+    loginWithGoogleFailure: (state, {payload}: {payload: string}) => {
+      state.user = null;
+      state.error = payload;
     },
   },
 });

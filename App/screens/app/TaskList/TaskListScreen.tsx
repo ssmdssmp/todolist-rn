@@ -1,19 +1,27 @@
-import {View, Text, Pressable} from 'react-native';
-import React from 'react';
-import {useAppDispatch} from '../../../store/types';
-import {userActions} from '../../../store/modules';
+import React, {useEffect} from 'react';
+
+import {ScreenWrapper} from '@/components';
+
+import {
+  AddTaskButton,
+  FilterButtons,
+  TaskList,
+  TaskListHeader,
+} from './components';
+import {tasksActions, useAppDispatch} from '@/store';
 
 const TaskListScreen = () => {
   const dispatch = useAppDispatch();
-  const handlePress = () => {
-    dispatch(userActions.signOut());
-  };
+  useEffect(() => {
+    dispatch(tasksActions.sortTasks());
+  }, []);
   return (
-    <View>
-      <Pressable onPress={handlePress}>
-        <Text>Logout</Text>
-      </Pressable>
-    </View>
+    <ScreenWrapper>
+      <TaskListHeader />
+      <FilterButtons />
+      <TaskList />
+      <AddTaskButton />
+    </ScreenWrapper>
   );
 };
 

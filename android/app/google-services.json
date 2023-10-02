@@ -12,7 +12,20 @@
           "package_name": "com.todolist"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "667981838882-4blrsnf06tomvo7f5376kh037kkgn4d0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.todolist",
+            "certificate_hash": "fc3f9f1555b6feb9355222d9eb5b1ba09fdf7826"
+          }
+        },
+        {
+          "client_id": "667981838882-dr999tds19f0paphp55q6gg1mp8fovga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCDRlWN4HlVOR4r8HoJVSwzI41XEDz-3HE"
@@ -20,7 +33,63 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "667981838882-dr999tds19f0paphp55q6gg1mp8fovga.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "667981838882-0glnnccgrl3bkur7r3t44ds0dufp4f9u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.todolist"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667981838882:android:9b2d81d4f2d31196ace87b",
+        "android_client_info": {
+          "package_name": "com.todolist.one"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "667981838882-45b77oitjvugghianf0navaefbkgr04d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.todolist.one",
+            "certificate_hash": "fc3f9f1555b6feb9355222d9eb5b1ba09fdf7826"
+          }
+        },
+        {
+          "client_id": "667981838882-dr999tds19f0paphp55q6gg1mp8fovga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDRlWN4HlVOR4r8HoJVSwzI41XEDz-3HE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "667981838882-dr999tds19f0paphp55q6gg1mp8fovga.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "667981838882-0glnnccgrl3bkur7r3t44ds0dufp4f9u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.todolist"
+              }
+            }
+          ]
         }
       }
     }
