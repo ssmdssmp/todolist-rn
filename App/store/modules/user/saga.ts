@@ -1,132 +1,130 @@
-// authSaga.js
-import {put, takeEvery} from 'redux-saga/effects';
-import firestore, {firebase} from '@react-native-firebase/firestore';
-import {userActions} from './reducer';
-import auth from '@react-native-firebase/auth';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import { delay, put, takeLatest } from "redux-saga/effects";
+import firestore from "@react-native-firebase/firestore";
+import { userActions } from "./actions";
+import auth from "@react-native-firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
 const {
-  tryLogin,
-  tryRegister,
-  loginSuccess,
-  loginFailure,
-  registerFailure,
-  registerSuccess,
-  logoutSuccess,
-  logoutFailure,
-  tryLogout,
-  tryLoginWithGoogle,
-  loginWithGoogleSuccess,
-  loginWithGoogleFailure,
+  LoginRequest,
+  RegisterRequest,
+  logoutRequest,
+  setUser,
+  setAuthError,
+  logout,
+  clearError,
 } = userActions;
-function* loginUser(action) {
+function* loginUserWorker({
+  payload,
+}: {
+  payload: {
+    email: string;
+    password: string;
+    authType: "firebase" | "google";
+  };
+  type: typeof LoginRequest.type;
+}) {
   try {
-    const {email, password} = action.payload;
-    const userCredential = yield auth().signInWithEmailAndPassword(
-      email,
-      password,
-    );
-    yield put(loginSuccess(userCredential.user));
-  } catch (error) {
-    if (error.message) {
-      if (error.message.toString().indexOf(']') !== -1) {
-        console.log(
-          error.message
-            .toString()
-            .slice(Number(error.message.toString().indexOf(']')) + 2),
-        );
+    const { email, password, authType } = payload;
+    if (authType === "firebase") {
+      const { user } = yield auth().signInWithEmailAndPassword(email, password);
+      yield put(setUser(user));
+    }
+    if (authType === "google") {
+      const hasPlayServices: boolean = yield GoogleSignin.hasPlayServices();
+      if (hasPlayServices) {
+        const { user } = yield GoogleSignin.signIn();
+        const checkRef = yield firestore()
+          .collection("users")
+          .doc(user.id)
+          .collection("tasks")
+          .get();
+        yield console.log(checkRef._docs);
+        if (checkRef._docs.length === 0) {
+          yield firestore()
+            .collection("users")
+            .doc(user.id)
+            .collection("tasks")
+            .add({});
+        }
         yield put(
-          loginFailure(
-            error.message
-              .toString()
-              .slice(Number(error.message.toString().indexOf(']')) + 2),
-          ),
+          setUser({
+            displayName: user.givenName,
+            email: user.email,
+            uid: user.id,
+          })
         );
       } else {
-        yield put(loginFailure(error.toString()));
+        yield put(
+          setAuthError(
+            "Your device has no Google Play Services installed. Try install it or use other auth method"
+          )
+        );
+        yield delay(3000);
+        yield put(clearError());
+        return;
       }
+    }
+  } catch (error) {
+    if (error) {
+      yield put(setAuthError(error.toString()));
+      yield delay(3000);
+      yield put(clearError());
     } else {
-      yield put(loginFailure(error.toString()));
+      setAuthError("Auth error. Check your connection and try again");
+      yield delay(3000);
+      yield put(clearError());
     }
   }
 }
 
-function* registerUser(action) {
+function* registerUserWorker({
+  payload,
+}: {
+  payload: { email: string; password: string };
+  type: typeof RegisterRequest.type;
+}) {
   try {
-    const {email, password} = action.payload;
-    const userCredential = yield auth().createUserWithEmailAndPassword(
+    const { email, password } = payload;
+    const { user } = yield auth().createUserWithEmailAndPassword(
       email,
-      password,
+      password
     );
     yield firestore()
-      .collection('users')
-      .doc(userCredential.user.uid)
-      .collection('tasks')
+      .collection("users")
+      .doc(user.uid)
+      .collection("tasks")
       .add({});
-    yield put(registerSuccess(userCredential.user));
+    yield put(setUser(user));
   } catch (error) {
-    if (error.message) {
-      if (error.message.toString().includes(']')) {
-        yield put(
-          registerSuccess(
-            error.message.toString().slice(error.message.indexOf(']' + 2)),
-          ),
-        );
-      } else {
-        yield put(registerFailure(error.message.toString()));
-      }
+    if (error) {
+      setAuthError(error.toString());
+      yield delay(3000);
+      yield put(clearError());
     } else {
-      yield put(registerFailure(error.toString()));
+      setAuthError("Auth error. Check your connection and try again");
+      yield delay(3000);
+      yield put(clearError());
     }
   }
 }
-export function* logoutUser() {
+export function* logoutUserWorker({}: { type: typeof logoutRequest.type }) {
   try {
     yield auth().signOut();
     yield GoogleSignin.signOut();
-    yield put(logoutSuccess({}));
+    yield put(logout());
   } catch (error) {
-    yield put(logoutFailure(error.toString()));
-  }
-}
-export function* LoginWithGoogle() {
-  try {
-    const hasPlayServices = yield GoogleSignin.hasPlayServices();
-    if (hasPlayServices) {
-      const {user} = yield GoogleSignin.signIn();
-      const checkRef = yield firestore().collection('users').doc(user.id).get();
-
-      if (!checkRef._exist) {
-        yield firestore()
-          .collection('users')
-          .doc(user.id)
-          .collection('tasks')
-          .add({});
-      }
-      yield put(
-        loginWithGoogleSuccess({
-          displayName: user.givenName,
-          email: user.email,
-          uid: user.id,
-        }),
-      );
-    }
-  } catch (error) {
-    yield put(loginWithGoogleFailure(error));
+    yield put(logout());
   }
 }
 
 export function* watchLogin() {
-  yield takeEvery(tryLogin, loginUser);
+  yield takeLatest(LoginRequest.type, loginUserWorker);
 }
 
 export function* watchRegister() {
-  yield takeEvery(tryRegister, registerUser);
+  yield takeLatest(RegisterRequest.type, registerUserWorker);
 }
 
 export function* watchLogout() {
-  yield takeEvery(tryLogout, logoutUser);
-}
-
-export function* watchLoginWithGoogle() {
-  yield takeEvery(tryLoginWithGoogle, LoginWithGoogle);
+  yield takeLatest(logoutRequest.type, logoutUserWorker);
 }

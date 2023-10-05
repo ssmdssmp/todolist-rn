@@ -1,65 +1,34 @@
-import {FirebaseUser} from '@/types';
-import {createSlice} from '@reduxjs/toolkit';
-import {IUserState} from './types';
+import { TPayload } from "./../../types";
+import { FirebaseUser } from "@/types";
+import { createSlice } from "@reduxjs/toolkit";
+import { IUserState } from "./types";
 
 const initialState: IUserState = {
   user: null,
-  error: null,
+  authError: null,
 };
 
 export const userReducer = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
-    tryLogin: ({payload}: {payload: {email: string; password: string}}) => {},
-    loginSuccess: (state, {payload}: {payload: FirebaseUser}) => {
+    setUser: (state, { payload }: TPayload<FirebaseUser>) => {
       state.user = payload;
-      state.error = null;
+      state.authError = null;
     },
-    loginFailure: (state, {payload}: {payload: string}) => {
+    setAuthError: (state, { payload }: TPayload<string>) => {
       state.user = null;
-      state.error = payload;
+      state.authError = payload;
     },
-    tryRegister: ({
-      payload,
-    }: {
-      payload: {email: string; password: string};
-    }) => {},
-    registerSuccess: (state, {payload}: {payload: FirebaseUser}) => {
-      state.user = payload;
-      state.error = null;
-    },
-    registerFailure: (state, {payload}: {payload: string}) => {
+    logout: (state) => {
       state.user = null;
-      state.error = payload;
+      state.authError = null;
     },
-    signOut: state => {
-      state.user = null;
-      state.error = null;
-    },
-    clearError: state => {
-      state.error = null;
-    },
-    tryLogout: () => {},
-    logoutSuccess: state => {
-      state.user = null;
-      state.error = null;
-    },
-    logoutFailure: (state, {payload}: {payload: string}) => {
-      state.user = null;
-      state.error = payload;
-    },
-    tryLoginWithGoogle: () => {},
-    loginWithGoogleSuccess: (state, {payload}: {payload: FirebaseUser}) => {
-      state.user = payload;
-      state.error = null;
-    },
-    loginWithGoogleFailure: (state, {payload}: {payload: string}) => {
-      state.user = null;
-      state.error = payload;
+    clearError: (state) => {
+      state.authError = null;
     },
   },
 });
 
-export const userActions = userReducer.actions;
+export const sliceActions = userReducer.actions;
 export default userReducer.reducer;

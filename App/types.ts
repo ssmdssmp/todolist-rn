@@ -8,23 +8,23 @@ export interface ITask {
 export type FirebaseUser = {
   displayName: string | null;
   email: string;
-  emailVerified: boolean;
-  isAnonymous: boolean;
-  metadata: {
+  emailVerified?: boolean;
+  isAnonymous?: boolean;
+  metadata?: {
     creationTime: number;
     lastSignInTime: number;
   };
-  multiFactor: {
+  multiFactor?: {
     enrolledFactors: any[];
   };
-  phoneNumber: string | null;
-  photoURL: string | null;
-  providerData: {
+  phoneNumber?: string | null;
+  photoURL?: string | null;
+  providerData?: {
     providerId: string;
     uid: string;
   }[];
-  providerId: string;
-  refreshToken: string;
-  tenantId: string | null;
+  providerId?: string;
+  refreshToken?: string;
+  tenantId?: string | null;
   uid: string;
 };

@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
 import {
   useAppDispatch,
   useAppSelector,
   userActions,
   getUserSelector,
-} from '@/store';
+} from "@/store";
 
-import {checkmarkCircle3d} from '@/assets';
-import {LogoImage} from '../styled';
+import { checkmarkCircle3d } from "@/assets";
+import { LogoImage } from "../styled";
 import {
   AuthButton,
   AuthButtonText,
@@ -17,39 +17,47 @@ import {
   ChangeAuthTypeButtonText,
   ChangeAuthTypeText,
   ScreenWrapper,
-} from '@/components';
-import {useNavigation} from '@react-navigation/native';
-import {SIGN_IN_SCREEN_NAME} from '@/navigation';
-import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
+} from "@/components";
+import { useNavigation } from "@react-navigation/native";
+import { SIGN_IN_SCREEN_NAME } from "@/navigation";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
 const SignUpScreen = () => {
   const dispatch = useAppDispatch();
-  const {user} = useAppSelector(getUserSelector);
+  const { user } = useAppSelector(getUserSelector);
 
   const navigation = useNavigation();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const handleChangeAuthTypeButtonPress = () => {
     navigation.navigate(SIGN_IN_SCREEN_NAME);
   };
   const handleSignUpButtonPress = () => {
     if (email && password) {
-      dispatch(userActions.tryRegister({email: email, password: password}));
+      dispatch(
+        userActions.RegisterRequest({ email: email, password: password })
+      );
     }
   };
   const handleGoogleButtonPress = () => {
-    dispatch(userActions.tryLoginWithGoogle());
+    dispatch(
+      userActions.LoginRequest({
+        email: null,
+        password: null,
+        authType: "google",
+      })
+    );
   };
   return (
     <ScreenWrapper>
       <LogoImage source={checkmarkCircle3d} />
       <AuthInput
-        onChangeText={e => setEmail(e)}
+        onChangeText={(e) => setEmail(e)}
         value={email}
         placeholder="Email"
       />
       <AuthInput
-        onChangeText={e => setPassword(e)}
+        onChangeText={(e) => setPassword(e)}
         value={password}
         secureTextEntry={true}
         placeholder="Password"
@@ -59,7 +67,7 @@ const SignUpScreen = () => {
       </AuthButton>
       <GoogleSigninButton
         style={{
-          width: '92%',
+          width: "92%",
           marginTop: 10,
           borderRadius: 20,
           height: 50,

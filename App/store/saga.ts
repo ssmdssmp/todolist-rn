@@ -1,16 +1,11 @@
-import {all} from 'redux-saga/effects';
+import { all } from "redux-saga/effects";
 import {
   watchChangeTaskStatus,
   watchCreateNewTask,
   watchDeleteTask,
   watchGetChats,
-} from './modules/tasks/saga';
-import {
-  watchLogin,
-  watchLoginWithGoogle,
-  watchLogout,
-  watchRegister,
-} from './modules/user/saga';
+} from "./modules/tasks/saga";
+import { watchLogin, watchLogout, watchRegister } from "./modules/user/saga";
 function* rootSaga() {
   yield all([
     watchLogin(),
@@ -20,7 +15,6 @@ function* rootSaga() {
     watchChangeTaskStatus(),
     watchDeleteTask(),
     watchLogout(),
-    watchLoginWithGoogle(),
   ]);
 }
 

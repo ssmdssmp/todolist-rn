@@ -1,103 +1,138 @@
-import firestore from '@react-native-firebase/firestore';
-import {put, takeEvery} from 'redux-saga/effects';
-import {tasksActions} from './reducer';
+import { getTasksSelector } from "./selector";
+import { ITask } from "@/types";
+import firestore from "@react-native-firebase/firestore";
+import { put, select, takeLatest } from "redux-saga/effects";
+import { tasksActions } from "./actions";
 
 const {
-  tryGetTasks,
-  getTasksFailure,
-  getTasksSuccess,
-  createNewTaskSuccess,
-  tryCreateNewTask,
-  createNewTaskFailure,
-  changeTaskStatusSuccess,
-  changeTaskStatusFailure,
-  tryChangeTaskStatus,
-  deleteTaskSuccess,
-  deleteTaskFailure,
-  tryDeleteTask,
+  getTasksRequest,
+  updateTaskStatusRequest,
+  deleteTaskRequest,
+  CreateNewTaskRequest,
+  updateTaskStatus,
+  createNewTask,
+  deleteTask,
+  setTasks,
+  setError,
 } = tasksActions;
-function* getTasks(action) {
+function* getTasksWorker({
+  payload,
+}: {
+  payload: Parameters<typeof getTasksRequest>[0];
+  type: typeof getTasksRequest.type;
+}) {
   try {
-    const {uid} = action.payload;
-    let arr = [];
+    const { uid } = payload;
+    let tasksArr: ITask[] = [];
     const userTasks = yield firestore()
-      .collection('users')
+      .collection("users")
       .doc(uid)
-      .collection('tasks')
+      .collection("tasks")
       .get();
-    userTasks._docs.map(item => {
+    userTasks._docs.map((item) => {
       if (Object.keys(item._data).length === 0) {
         return;
       }
-      arr.push({...item._data, id: item.ref._documentPath._parts.at(-1)});
+      tasksArr.push({
+        ...item._data,
+        id: item.ref._documentPath._parts.at(-1),
+      });
     });
-    if (arr.length !== 0) {
-      yield put(getTasksSuccess(arr));
+    if (tasksArr.length !== 0) {
+      yield put(setTasks(tasksArr));
     } else {
-      yield put(getTasksSuccess([]));
+      yield put(setTasks([]));
     }
   } catch (error) {
-    yield put(getTasksFailure(error.toString()));
+    const { tasks: oldTasks }: { tasks: ITask[] } = yield select(
+      getTasksSelector
+    );
+    yield put(setError(error.toString()));
+    put(setTasks(oldTasks));
   }
 }
 
-function* createNewTask(action) {
-  const {uid, newTask} = action.payload;
+function* createNewTaskWorker({
+  payload,
+}: {
+  payload: Parameters<typeof CreateNewTaskRequest>[0];
+  type: typeof CreateNewTaskRequest.type;
+}) {
+  const { uid, newTask } = payload;
   try {
     const newTaskRef = yield firestore()
-      .collection('users')
+      .collection("users")
       .doc(uid)
-      .collection('tasks')
-      .add({...newTask});
+      .collection("tasks")
+      .add({ ...newTask });
     const newTaskId = newTaskRef._documentPath._parts.at(-1);
-    yield put(createNewTaskSuccess({...newTask, id: newTaskId}));
+    yield put(createNewTask({ ...newTask, id: newTaskId }));
   } catch (error) {
-    yield put(
-      createNewTaskFailure({newTask: newTask, error: error.toString()}),
-    );
+    if (error) {
+      yield put(setError("Error while creating new task: " + error.toString()));
+    } else {
+      yield put(setError("Error while creating new task"));
+    }
   }
 }
 
-function* changeTaskStatus(action) {
-  const {uid, taskId, prevState} = action.payload;
+function* changeTaskStatusWorker({
+  payload,
+}: {
+  payload: Parameters<typeof updateTaskStatusRequest>[0];
+  type: typeof updateTaskStatusRequest.type;
+}) {
+  const { uid, taskId, prevState } = payload;
   try {
     yield firestore()
-      .collection('users')
+      .collection("users")
       .doc(uid)
-      .collection('tasks')
+      .collection("tasks")
       .doc(taskId)
-      .update({isDone: !prevState});
-    yield put(changeTaskStatusSuccess(taskId));
+      .update({ isDone: !prevState });
+    yield put(updateTaskStatus(taskId));
   } catch (error) {
-    yield put(changeTaskStatusFailure({id: taskId, error: error.toString()}));
+    if (error) {
+      yield setError("Error while updating task status: " + error.toString());
+    } else {
+      yield setError("Error while updating task status");
+    }
   }
 }
 
-function* deleteTask(action) {
-  const {taskId, uid} = action.payload;
+function* deleteTaskWorker({
+  payload,
+}: {
+  payload: Parameters<typeof deleteTaskRequest>[0];
+  type: typeof deleteTaskRequest.type;
+}) {
+  const { taskId, uid } = payload;
   try {
     yield firestore()
-      .collection('users')
+      .collection("users")
       .doc(uid)
-      .collection('tasks')
+      .collection("tasks")
       .doc(taskId)
       .delete();
-    yield put(deleteTaskSuccess(taskId));
+    yield put(deleteTask(taskId));
   } catch (error) {
-    console.log(error);
-    yield put(deleteTaskFailure({id: taskId, error: error.toString()}));
+    if (error) {
+      yield put(setError("Error while deleting task: " + error.toString()));
+    } else {
+      yield put(setError("Error while deleting task"));
+    }
   }
 }
 
 export function* watchGetChats() {
-  yield takeEvery(tryGetTasks, getTasks);
+  yield takeLatest(getTasksRequest.type, getTasksWorker);
 }
 export function* watchCreateNewTask() {
-  yield takeEvery(tryCreateNewTask, createNewTask);
+  yield takeLatest(CreateNewTaskRequest.type, createNewTaskWorker);
 }
 export function* watchChangeTaskStatus() {
-  yield takeEvery(tryChangeTaskStatus, changeTaskStatus);
+  yield takeLatest(updateTaskStatusRequest.type, changeTaskStatusWorker);
 }
 export function* watchDeleteTask() {
-  yield takeEvery(tryDeleteTask, deleteTask);
+  yield takeLatest(deleteTaskRequest.type, deleteTaskWorker);
 }

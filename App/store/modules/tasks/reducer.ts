@@ -1,109 +1,56 @@
-import {ITask} from '@/types';
-import {createSlice} from '@reduxjs/toolkit';
+import { TPayload } from "./../../types";
+import { ITask } from "@/types";
+import { createSlice } from "@reduxjs/toolkit";
+import { ITasksState } from "./types";
 
-const initialState: {
-  tasks: ITask[];
-  error: null | string;
-  filterMode: 'all' | 'onlyInProgress' | 'onlyDone';
-} = {
+const initialState: ITasksState = {
   tasks: [],
   error: null,
-  filterMode: 'all',
+  filterMode: "all",
 };
 export const tasksReducer = createSlice({
-  name: 'chat',
+  name: "chat",
   initialState,
   reducers: {
-    tryGetTasks: ({payload}: {payload: {uid: string}}) => {},
-    getTasksSuccess: (state, {payload}: {payload: ITask[]}) => {
-      state.tasks = payload;
+    setTasks: (state, { payload }: TPayload<ITask[]>) => {
       if (payload.length > 1) {
         state.tasks = payload.sort((a, b) => {
-          const DateA = new Date(a.creationDate);
-          const DateB = new Date(b.creationDate);
+          const DateA: number = Number(new Date(a.creationDate));
+          const DateB: number = Number(new Date(b.creationDate));
           return DateB - DateA;
         });
       } else {
         state.tasks = payload;
       }
-
-      state.error = null;
     },
-    getTasksFailure: (state, {payload}: {payload: string}) => {
-      if (state.tasks.length === 0) {
-        state.tasks = [];
-      }
-      state.error = payload;
-    },
-    tryCreateNewTask: ({
-      payload,
-    }: {
-      payload: {uid: string; newTask: ITask};
-    }) => {},
-    createNewTaskSuccess: (state, {payload}: {payload: ITask}) => {
+    createNewTask: (state, { payload }: TPayload<ITask>) => {
       state.tasks = [payload, ...state.tasks];
-
-      state.error = null;
     },
-    createNewTaskFailure: (
-      state,
-      {payload}: {payload: {error: string; newTask: ITask}},
-    ) => {
-      state.error = payload.error;
-      state.tasks = [payload.newTask, ...state.tasks];
+    deleteTask: (state, { payload }: TPayload<string>) => {
+      state.tasks = state.tasks.filter((el) => el.id !== payload);
     },
-    tryDeleteTask: ({payload}: {payload: {taskId: string; uid: string}}) => {},
-    deleteTaskSuccess: (state, {payload}: {payload: string}) => {
-      state.tasks = state.tasks.filter(el => el.id !== payload);
-    },
-    deleteTaskFailure: (
-      state,
-      {payload}: {payload: {error: string; id: string}},
-    ) => {
-      state.tasks = state.tasks.filter(el => el.id !== payload.id);
-
-      state.error = payload.error;
-    },
-    setTasks: (state, {payload}: {payload: ITask[]}) => {
-      state.tasks = payload;
-    },
-    resetTasks: state => {
-      state.tasks = [];
-    },
-    clearError: state => {
-      state.error = null;
-    },
-    tryChangeTaskStatus: ({
-      payload,
-    }: {
-      payload: {uid: string; taskId: string; prevState: boolean};
-    }) => {},
-    changeTaskStatusSuccess: (state, {payload}) => {
-      state.tasks.find(el => el.id === payload).isDone = !state.tasks.find(
-        el => el.id === payload,
-      ).isDone;
-    },
-    changeTaskStatusFailure: (state, {payload}) => {
-      state.tasks.find(el => el.id === payload).isDone = !state.tasks.find(
-        el => el.id === payload.id,
-      ).isDone;
-
-      state.error = payload.error;
-    },
-    sortTasks: state => {
-      state.tasks = state.tasks.sort((a, b) => {
-        const DateA = new Date(a.creationDate);
-        const DateB = new Date(b.creationDate);
-        return DateA - DateB;
-      });
+    updateTaskStatus: (state, { payload }: TPayload<string>) => {
+      const taskToUpdate = state.tasks.find((el) => el.id === payload);
+      if (taskToUpdate) {
+        taskToUpdate.isDone = !taskToUpdate.isDone;
+      }
     },
     setFilterMode: (
       state,
-      {payload}: {payload: 'all' | 'onlyInProgress' | 'onlyDone'},
+      { payload }: TPayload<typeof initialState.filterMode>
     ) => {
       state.filterMode = payload;
     },
+    resetTask: (state) => {
+      state.tasks = [];
+    },
+    setError: (state, { payload }: TPayload<string>) => {
+      state.error = payload;
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
 });
-export const tasksActions = tasksReducer.actions;
+export const sliceActions = tasksReducer.actions;
 export default tasksReducer.reducer;

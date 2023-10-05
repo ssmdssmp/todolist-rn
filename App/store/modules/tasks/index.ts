@@ -1,2 +1,4 @@
-export {default as tasksReducer, tasksActions} from './reducer';
-export * from './selector';
+export { default as tasksReducer } from "./reducer";
+export * from "./selector";
+export * from "./actions";
+export * from "./actionTypes";

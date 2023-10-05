@@ -1,12 +1,12 @@
-import React from 'react';
-import {ScreenWrapper} from '@/components';
+import React from "react";
+import { ScreenWrapper } from "@/components";
 import {
   useAppDispatch,
   useAppSelector,
   getUserSelector,
   userActions,
-} from '@/store';
-import {userIcon} from '@/assets';
+} from "@/store";
+import { userIcon } from "@/assets";
 import {
   GoBackButton,
   GoBackButtonText,
@@ -14,19 +14,19 @@ import {
   LogoutButtonText,
   ProfileIcon,
   ProfileText,
-} from './styled';
-import {useNavigation} from '@react-navigation/native';
-import {TODOLIST_NAVIGATOR_NAME} from '@/navigation';
+} from "./styled";
+import { useNavigation } from "@react-navigation/native";
+import { TODOLIST_NAVIGATOR_NAME } from "@/navigation";
 
 const SettingsScreen = () => {
-  const {user} = useAppSelector(getUserSelector);
+  const { user } = useAppSelector(getUserSelector);
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const handleGoBackButtonPress = () => {
     navigation.navigate(TODOLIST_NAVIGATOR_NAME);
   };
   const handleLogoutButtonPress = () => {
-    dispatch(userActions.tryLogout());
+    dispatch(userActions.logoutRequest());
   };
   return (
     <ScreenWrapper>
