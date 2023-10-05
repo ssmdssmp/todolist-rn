@@ -1,9 +1,9 @@
-import React from 'react';
-import {AddTaskButtonWrapper} from './styled';
-import {SvgXml} from 'react-native-svg';
-import {plusIcon} from '@/assets';
-import {useNavigation} from '@react-navigation/native';
-import {CREATE_TASK_SCREEN_NAME} from '@/navigation';
+import { AddTaskButtonWrapper } from "./styled";
+import { CREATE_TASK_SCREEN_NAME } from "@/navigation";
+import React from "react";
+import { SvgXml } from "react-native-svg";
+import { plusIcon } from "@/assets";
+import { useNavigation } from "@react-navigation/native";
 
 const AddTaskButton = () => {
   const navigation = useNavigation();

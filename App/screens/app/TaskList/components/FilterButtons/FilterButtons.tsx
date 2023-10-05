@@ -1,52 +1,52 @@
-import React from 'react';
 import {
   FilterButton,
   FilterButtonContentWrapper,
   FilterButtonCounterText,
-  FilterButtonsWrapper,
   FilterButtonText,
+  FilterButtonsWrapper,
   IconContainer,
-} from './styled';
-import {SvgXml} from 'react-native-svg';
+} from "./styled";
 import {
   clockIcon,
   clockIconInactive,
   doneIcon,
   doneIconInactive,
-} from '@/assets';
+} from "@/assets";
 import {
-  useAppDispatch,
-  useAppSelector,
   getTasksSelector,
   tasksActions,
-} from '@/store';
-import {Platform} from 'react-native';
+  useAppDispatch,
+  useAppSelector,
+} from "@/store";
+
+import React from "react";
+import { SvgXml } from "react-native-svg";
 
 const FilterButtons = () => {
-  const {tasks, filterMode} = useAppSelector(getTasksSelector);
+  const { tasks, filterMode } = useAppSelector(getTasksSelector);
 
   const dispatch = useAppDispatch();
 
   const handleInProgressFilterPress = () => {
-    if (filterMode === 'all') {
-      dispatch(tasksActions.setFilterMode('onlyDone'));
-    }
-    if (filterMode === 'onlyDone') {
-      dispatch(tasksActions.setFilterMode('all'));
-    }
-    if (filterMode === 'onlyInProgress') {
-      dispatch(tasksActions.setFilterMode('onlyDone'));
+    switch (filterMode) {
+      case "all":
+      case "onlyInProgress": {
+        return dispatch(tasksActions.setFilterMode("onlyDone"));
+      }
+      case "onlyDone": {
+        return dispatch(tasksActions.setFilterMode("all"));
+      }
     }
   };
   const handleDoneFilterPress = () => {
-    if (filterMode === 'all') {
-      dispatch(tasksActions.setFilterMode('onlyInProgress'));
-    }
-    if (filterMode === 'onlyInProgress') {
-      dispatch(tasksActions.setFilterMode('all'));
-    }
-    if (filterMode === 'onlyDone') {
-      dispatch(tasksActions.setFilterMode('onlyInProgress'));
+    switch (filterMode) {
+      case "all":
+      case "onlyDone": {
+        return dispatch(tasksActions.setFilterMode("onlyInProgress"));
+      }
+      case "onlyInProgress": {
+        return dispatch(tasksActions.setFilterMode("all"));
+      }
     }
   };
 
@@ -55,15 +55,16 @@ const FilterButtons = () => {
       <FilterButton
         onPress={handleInProgressFilterPress}
         bgColor={
-          filterMode === 'all' || filterMode === 'onlyInProgress'
-            ? '#8195db'
-            : '#dfe2ed'
-        }>
+          filterMode === "all" || filterMode === "onlyInProgress"
+            ? "#8195db"
+            : "#dfe2ed"
+        }
+      >
         <FilterButtonContentWrapper>
           <IconContainer>
             <SvgXml
               xml={
-                filterMode === 'all' || filterMode === 'onlyInProgress'
+                filterMode === "all" || filterMode === "onlyInProgress"
                   ? clockIcon
                   : clockIconInactive
               }
@@ -73,22 +74,23 @@ const FilterButtons = () => {
           </IconContainer>
           <FilterButtonText>In progress</FilterButtonText>
           <FilterButtonCounterText>
-            {tasks.filter(el => el.isDone === false).length}
+            {tasks.filter((el) => el.isDone === false).length}
           </FilterButtonCounterText>
         </FilterButtonContentWrapper>
       </FilterButton>
       <FilterButton
         onPress={handleDoneFilterPress}
         bgColor={
-          filterMode === 'all' || filterMode === 'onlyDone'
-            ? '#5aad94'
-            : '#dfe2ed'
-        }>
+          filterMode === "all" || filterMode === "onlyDone"
+            ? "#5aad94"
+            : "#dfe2ed"
+        }
+      >
         <FilterButtonContentWrapper>
           <IconContainer>
             <SvgXml
               xml={
-                filterMode === 'all' || filterMode === 'onlyDone'
+                filterMode === "all" || filterMode === "onlyDone"
                   ? doneIcon
                   : doneIconInactive
               }
@@ -98,7 +100,7 @@ const FilterButtons = () => {
           </IconContainer>
           <FilterButtonText>Done</FilterButtonText>
           <FilterButtonCounterText>
-            {tasks.filter(el => el.isDone !== false).length}
+            {tasks.filter((el) => el.isDone !== false).length}
           </FilterButtonCounterText>
         </FilterButtonContentWrapper>
       </FilterButton>

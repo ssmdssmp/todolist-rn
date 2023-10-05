@@ -1,7 +1,7 @@
-import { getTasksSelector } from "./selector";
+import { delay, put, takeLatest } from "redux-saga/effects";
+
 import { ITask } from "@/types";
 import firestore from "@react-native-firebase/firestore";
-import { put, select, takeLatest } from "redux-saga/effects";
 import { tasksActions } from "./actions";
 
 const {
@@ -14,7 +14,13 @@ const {
   deleteTask,
   setTasks,
   setError,
+  clearError,
 } = tasksActions;
+
+function* delayAndClearError() {
+  yield delay(3000);
+  yield put(clearError());
+}
 function* getTasksWorker({
   payload,
 }: {
@@ -44,11 +50,13 @@ function* getTasksWorker({
       yield put(setTasks([]));
     }
   } catch (error) {
-    const { tasks: oldTasks }: { tasks: ITask[] } = yield select(
-      getTasksSelector
-    );
-    yield put(setError(error.toString()));
-    put(setTasks(oldTasks));
+    if (error) {
+      yield put(setError("Error getting tasks: " + setError(error.toString())));
+      delayAndClearError();
+    } else {
+      yield put(setError("Error getting tasks"));
+      delayAndClearError();
+    }
   }
 }
 
@@ -70,8 +78,10 @@ function* createNewTaskWorker({
   } catch (error) {
     if (error) {
       yield put(setError("Error while creating new task: " + error.toString()));
+      delayAndClearError();
     } else {
       yield put(setError("Error while creating new task"));
+      delayAndClearError();
     }
   }
 }
@@ -94,8 +104,10 @@ function* changeTaskStatusWorker({
   } catch (error) {
     if (error) {
       yield setError("Error while updating task status: " + error.toString());
+      delayAndClearError();
     } else {
       yield setError("Error while updating task status");
+      delayAndClearError();
     }
   }
 }
@@ -118,8 +130,10 @@ function* deleteTaskWorker({
   } catch (error) {
     if (error) {
       yield put(setError("Error while deleting task: " + error.toString()));
+      delayAndClearError();
     } else {
       yield put(setError("Error while deleting task"));
+      delayAndClearError();
     }
   }
 }

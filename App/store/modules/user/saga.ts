@@ -1,8 +1,9 @@
 import { delay, put, takeLatest } from "redux-saga/effects";
+
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { userActions } from "./actions";
-import auth from "@react-native-firebase/auth";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 const {
   LoginRequest,
@@ -13,19 +14,21 @@ const {
   logout,
   clearError,
 } = userActions;
+
+function* delayAndClearError() {
+  yield delay(3000);
+  yield put(clearError());
+}
+
 function* loginUserWorker({
   payload,
 }: {
-  payload: {
-    email: string;
-    password: string;
-    authType: "firebase" | "google";
-  };
+  payload: Parameters<typeof LoginRequest>[0];
   type: typeof LoginRequest.type;
 }) {
   try {
     const { email, password, authType } = payload;
-    if (authType === "firebase") {
+    if (authType === "firebase" && email && password) {
       const { user } = yield auth().signInWithEmailAndPassword(email, password);
       yield put(setUser(user));
     }
@@ -59,20 +62,16 @@ function* loginUserWorker({
             "Your device has no Google Play Services installed. Try install it or use other auth method"
           )
         );
-        yield delay(3000);
-        yield put(clearError());
-        return;
+        delayAndClearError();
       }
     }
   } catch (error) {
     if (error) {
-      yield put(setAuthError(error.toString()));
-      yield delay(3000);
-      yield put(clearError());
+      yield put(setAuthError("Auth error: " + error.toString()));
+      delayAndClearError();
     } else {
       setAuthError("Auth error. Check your connection and try again");
-      yield delay(3000);
-      yield put(clearError());
+      delayAndClearError();
     }
   }
 }
@@ -97,13 +96,11 @@ function* registerUserWorker({
     yield put(setUser(user));
   } catch (error) {
     if (error) {
-      setAuthError(error.toString());
-      yield delay(3000);
-      yield put(clearError());
+      setAuthError("Auth error:" + error.toString());
+      delayAndClearError();
     } else {
       setAuthError("Auth error. Check your connection and try again");
-      yield delay(3000);
-      yield put(clearError());
+      delayAndClearError();
     }
   }
 }

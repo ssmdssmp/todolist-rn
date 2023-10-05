@@ -13,7 +13,6 @@ pod 'Firebase', :modular_headers => true
 pod 'FirebaseCoreInternal', :modular_headers => true
 pod 'GoogleUtilities', :modular_headers => true
 pod 'FirebaseCore', :modular_headers => true
-pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
 # because `react-native-flipper` depends on (FlipperKit,...) that will be excluded

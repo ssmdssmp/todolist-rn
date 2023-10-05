@@ -1,21 +1,22 @@
-import React from 'react';
-import {SvgXml} from 'react-native-svg';
-import {wavingHand, userIcon} from '@/assets';
 import {
-  GreetingsWrapper,
-  GreetingsTextWrapper,
-  GreetingsTextName,
-  GreetingsTextAction,
   GreetingsImage,
-  TaskListHeaderWrapper,
+  GreetingsTextAction,
+  GreetingsTextName,
+  GreetingsTextWrapper,
+  GreetingsWrapper,
   ProfilePressable,
-} from './styled';
-import {useAppSelector, getUserSelector} from '@/store';
-import {useNavigation} from '@react-navigation/native';
-import {SETTINGS_SCREEN_NAME} from '@/navigation';
+  TaskListHeaderWrapper,
+} from "./styled";
+import { getUserSelector, useAppSelector } from "@/store";
+import { userIcon, wavingHand } from "@/assets";
+
+import React from "react";
+import { SETTINGS_SCREEN_NAME } from "@/navigation";
+import { SvgXml } from "react-native-svg";
+import { useNavigation } from "@react-navigation/native";
 
 const TaskListHeader = () => {
-  const {user} = useAppSelector(getUserSelector);
+  const { user } = useAppSelector(getUserSelector);
   const navigation = useNavigation();
   const handleProfileButtonPress = () => {
     navigation.navigate(SETTINGS_SCREEN_NAME);
@@ -25,10 +26,12 @@ const TaskListHeader = () => {
       <GreetingsWrapper>
         <GreetingsTextWrapper>
           <GreetingsTextName>
-            Hello{' '}
-            {user.displayName
+            Hello{" "}
+            {user
               ? user.displayName
-              : user.email.slice(0, user.email.indexOf('@'))}
+                ? user.displayName
+                : user.email.slice(0, user.email.indexOf("@"))
+              : null}
             ,
           </GreetingsTextName>
           <GreetingsTextAction>You have work to do</GreetingsTextAction>

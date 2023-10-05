@@ -1,12 +1,3 @@
-import React, {useEffect, useState} from 'react';
-import {
-  useAppDispatch,
-  useAppSelector,
-  userActions,
-  getUserSelector,
-} from '@/store';
-import {checkmarkCircle3d} from '@/assets';
-import {LogoImage} from '../styled';
 import {
   AuthButton,
   AuthButtonText,
@@ -17,56 +8,66 @@ import {
   ChangeAuthTypeText,
   ErrorText,
   ScreenWrapper,
-} from '@/components';
-import {useNavigation} from '@react-navigation/native';
-import {SIGN_UP_SCREEN_NAME} from '@/navigation';
-import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
+} from "@/components";
+import React, { useState } from "react";
+import {
+  getUserSelector,
+  useAppDispatch,
+  useAppSelector,
+  userActions,
+} from "@/store";
+
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import { LogoImage } from "../styled";
+import { SIGN_UP_SCREEN_NAME } from "@/navigation";
+import { checkmarkCircle3d } from "@/assets";
+import { useNavigation } from "@react-navigation/native";
 
 const SignUpScreen = () => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const {error} = useAppSelector(getUserSelector);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const { authError } = useAppSelector(getUserSelector);
   const handleChangeAuthTypeButtonPress = () => {
     navigation.navigate(SIGN_UP_SCREEN_NAME);
   };
   const handleSignInButtonPress = () => {
     if (email && password) {
-      dispatch(userActions.tryLogin({email: email, password: password}));
+      dispatch(
+        userActions.LoginRequest({
+          email: email,
+          password: password,
+          authType: "firebase",
+        })
+      );
     }
   };
-  useEffect(() => {
-    if (error) {
-      setTimeout(() => {
-        dispatch(userActions.clearError());
-      }, 2000);
-    }
-  }, [error]);
+
   const handleGoogleButtonPress = () => {
-    dispatch(userActions.tryLoginWithGoogle());
+    dispatch(userActions.LoginRequest({ authType: "google" }));
   };
   return (
     <ScreenWrapper>
       <LogoImage source={checkmarkCircle3d} />
       <AuthInput
-        onChangeText={e => setEmail(e)}
+        onChangeText={(e) => setEmail(e)}
         value={email}
         placeholder="Email"
       />
       <AuthInput
-        onChangeText={e => setPassword(e)}
+        onChangeText={(e) => setPassword(e)}
         value={password}
         secureTextEntry={true}
         placeholder="Password"
       />
-      {error ? <ErrorText>{error}</ErrorText> : null}
+      {authError ? <ErrorText>{authError}</ErrorText> : null}
       <AuthButton onPress={handleSignInButtonPress}>
         <AuthButtonText>Sign In</AuthButtonText>
       </AuthButton>
       <GoogleSigninButton
         style={{
-          width: '92%',
+          width: "92%",
           marginTop: 10,
           borderRadius: 20,
           height: 50,

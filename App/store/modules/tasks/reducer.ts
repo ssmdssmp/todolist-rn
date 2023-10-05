@@ -1,7 +1,7 @@
-import { TPayload } from "./../../types";
 import { ITask } from "@/types";
-import { createSlice } from "@reduxjs/toolkit";
 import { ITasksState } from "./types";
+import { TPayload } from "./../../types";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState: ITasksState = {
   tasks: [],

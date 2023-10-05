@@ -1,19 +1,18 @@
-import React, { useEffect, useRef } from "react";
-import { TasksFlatList } from "./components";
+import React, { useEffect } from "react";
 import {
   getTasksSelector,
-  useAppDispatch,
-  useAppSelector,
   getUserSelector,
   tasksActions,
+  useAppDispatch,
+  useAppSelector,
 } from "@/store";
+
 import { ITask } from "@/types";
 import { Task } from "./components";
+import { TasksFlatList } from "./components";
 
 const TaskList = () => {
   const { tasks, filterMode } = useAppSelector(getTasksSelector);
-  const tasksRef = useRef(null);
-  tasksRef.current = tasks;
   const { user } = useAppSelector(getUserSelector);
   const dispatch = useAppDispatch();
 

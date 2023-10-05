@@ -16,6 +16,7 @@ import {
   ChangeAuthTypeButton,
   ChangeAuthTypeButtonText,
   ChangeAuthTypeText,
+  ErrorText,
   ScreenWrapper,
 } from "@/components";
 import { useNavigation } from "@react-navigation/native";
@@ -24,7 +25,7 @@ import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
 const SignUpScreen = () => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector(getUserSelector);
+  const { authError } = useAppSelector(getUserSelector);
 
   const navigation = useNavigation();
   const [email, setEmail] = useState<string>("");
@@ -42,8 +43,6 @@ const SignUpScreen = () => {
   const handleGoogleButtonPress = () => {
     dispatch(
       userActions.LoginRequest({
-        email: null,
-        password: null,
         authType: "google",
       })
     );
@@ -62,6 +61,7 @@ const SignUpScreen = () => {
         secureTextEntry={true}
         placeholder="Password"
       />
+      {authError ? <ErrorText>{authError}</ErrorText> : null}
       <AuthButton onPress={handleSignUpButtonPress}>
         <AuthButtonText>Sign Up</AuthButtonText>
       </AuthButton>

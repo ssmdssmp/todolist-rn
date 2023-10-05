@@ -1,7 +1,7 @@
-import { ITask } from "@/types";
-import { ActionCreatorWithPayload, createAction } from "@reduxjs/toolkit";
-import { sliceActions } from "./reducer";
 import { ActionTypes } from "./actionTypes";
+import { ITask } from "@/types";
+import { createAction } from "@reduxjs/toolkit";
+import { sliceActions } from "./reducer";
 
 export const tasksActions = {
   ...sliceActions,
