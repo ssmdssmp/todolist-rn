@@ -1,13 +1,3 @@
-import React, { useState } from "react";
-import {
-  useAppDispatch,
-  useAppSelector,
-  userActions,
-  getUserSelector,
-} from "@/store";
-
-import { checkmarkCircle3d } from "@/assets";
-import { LogoImage } from "../styled";
 import {
   AuthButton,
   AuthButtonText,
@@ -19,9 +9,20 @@ import {
   ErrorText,
   ScreenWrapper,
 } from "@/components";
-import { useNavigation } from "@react-navigation/native";
-import { SIGN_IN_SCREEN_NAME } from "@/navigation";
+import React, { useEffect, useState } from "react";
+import {
+  getUserSelector,
+  useAppDispatch,
+  useAppSelector,
+  userActions,
+} from "@/store";
+
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import { LogoImage } from "../styled";
+import { SIGN_IN_SCREEN_NAME } from "@/navigation";
+import auth from "@react-native-firebase/auth";
+import { checkmarkCircle3d } from "@/assets";
+import { useNavigation } from "@react-navigation/native";
 
 const SignUpScreen = () => {
   const dispatch = useAppDispatch();
@@ -33,6 +34,14 @@ const SignUpScreen = () => {
   const handleChangeAuthTypeButtonPress = () => {
     navigation.navigate(SIGN_IN_SCREEN_NAME);
   };
+  useEffect(() => {
+    auth()
+      .signInWithPhoneNumber("+380676839356")
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  }, []);
   const handleSignUpButtonPress = () => {
     if (email && password) {
       dispatch(
