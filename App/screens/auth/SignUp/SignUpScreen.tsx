@@ -9,7 +9,7 @@ import {
   ErrorText,
   ScreenWrapper,
 } from "@/components";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   getUserSelector,
   useAppDispatch,
@@ -34,14 +34,7 @@ const SignUpScreen = () => {
   const handleChangeAuthTypeButtonPress = () => {
     navigation.navigate(SIGN_IN_SCREEN_NAME);
   };
-  useEffect(() => {
-    auth()
-      .signInWithPhoneNumber("+380676839356")
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+
   const handleSignUpButtonPress = () => {
     if (email && password) {
       dispatch(

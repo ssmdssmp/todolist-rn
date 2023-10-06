@@ -1,25 +1,26 @@
-import { Text } from "react-native";
-import React from "react";
-import { SvgXml } from "react-native-svg";
-import { circleIcon, doneCircleIcon, calendarIcon, trashIcon } from "@/assets";
 import {
-  TaskWrapper,
-  TaskPressable,
-  StatusIcon,
-  TaskTextWrapper,
-  TaskDateWrapper,
   CalendarIcon,
-  TaskTitleText,
   DeleteTaskWrapper,
+  StatusIcon,
+  TaskDateWrapper,
+  TaskPressable,
+  TaskTextWrapper,
+  TaskTitleText,
+  TaskWrapper,
 } from "./styled";
-import { ITask } from "@/types";
-import moment from "moment";
+import { calendarIcon, circleIcon, doneCircleIcon, trashIcon } from "@/assets";
 import {
+  getUserSelector,
+  tasksActions,
   useAppDispatch,
   useAppSelector,
-  tasksActions,
-  getUserSelector,
 } from "@/store";
+
+import { ITask } from "@/types";
+import React from "react";
+import { SvgXml } from "react-native-svg";
+import { Text } from "react-native";
+import moment from "moment";
 
 const Task = ({ item }: { item: ITask }) => {
   const formattedCreationTime = moment(new Date(item.creationDate)).calendar();
