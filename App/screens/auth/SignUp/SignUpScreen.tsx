@@ -9,7 +9,7 @@ import {
   ErrorText,
   ScreenWrapper,
 } from "@/components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getUserSelector,
   useAppDispatch,
@@ -34,7 +34,12 @@ const SignUpScreen = () => {
   const handleChangeAuthTypeButtonPress = () => {
     navigation.navigate(SIGN_IN_SCREEN_NAME);
   };
-
+  useEffect(() => {
+    dispatch(userActions.clearError());
+  }, []);
+  useEffect(() => {
+    console.log(authError);
+  }, [authError]);
   const handleSignUpButtonPress = () => {
     if (email && password) {
       dispatch(

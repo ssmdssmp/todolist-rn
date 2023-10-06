@@ -52,10 +52,12 @@ function* getTasksWorker({
   } catch (error) {
     if (error) {
       yield put(setError("Error getting tasks: " + setError(error.toString())));
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     } else {
       yield put(setError("Error getting tasks"));
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     }
   }
 }
@@ -78,10 +80,12 @@ function* createNewTaskWorker({
   } catch (error) {
     if (error) {
       yield put(setError("Error while creating new task: " + error.toString()));
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     } else {
       yield put(setError("Error while creating new task"));
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     }
   }
 }
@@ -104,10 +108,12 @@ function* changeTaskStatusWorker({
   } catch (error) {
     if (error) {
       yield setError("Error while updating task status: " + error.toString());
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     } else {
       yield setError("Error while updating task status");
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     }
   }
 }
@@ -130,10 +136,12 @@ function* deleteTaskWorker({
   } catch (error) {
     if (error) {
       yield put(setError("Error while deleting task: " + error.toString()));
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     } else {
       yield put(setError("Error while deleting task"));
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     }
   }
 }

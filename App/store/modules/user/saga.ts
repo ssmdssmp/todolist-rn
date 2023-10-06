@@ -62,16 +62,18 @@ function* loginUserWorker({
             "Your device has no Google Play Services installed. Try install it or use other auth method"
           )
         );
-        delayAndClearError();
+        yield delay(3000);
+        yield put(clearError());
       }
     }
   } catch (error) {
     if (error) {
       yield put(setAuthError("Auth error: " + error.toString()));
-      delayAndClearError();
+      yield;
     } else {
       setAuthError("Auth error. Check your connection and try again");
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     }
   }
 }
@@ -97,10 +99,12 @@ function* registerUserWorker({
   } catch (error) {
     if (error) {
       setAuthError("Auth error:" + error.toString());
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     } else {
       setAuthError("Auth error. Check your connection and try again");
-      delayAndClearError();
+      yield delay(3000);
+      yield put(clearError());
     }
   }
 }
