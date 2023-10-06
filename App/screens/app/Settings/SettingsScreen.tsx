@@ -1,12 +1,3 @@
-import React from "react";
-import { ScreenWrapper } from "@/components";
-import {
-  useAppDispatch,
-  useAppSelector,
-  getUserSelector,
-  userActions,
-} from "@/store";
-import { userIcon } from "@/assets";
 import {
   GoBackButton,
   GoBackButtonText,
@@ -15,8 +6,18 @@ import {
   ProfileIcon,
   ProfileText,
 } from "./styled";
-import { useNavigation } from "@react-navigation/native";
+import {
+  getUserSelector,
+  useAppDispatch,
+  useAppSelector,
+  userActions,
+} from "@/store";
+
+import React from "react";
+import { ScreenWrapper } from "@/components";
 import { TODOLIST_NAVIGATOR_NAME } from "@/navigation";
+import { useNavigation } from "@react-navigation/native";
+import { userIcon } from "@/assets";
 
 const SettingsScreen = () => {
   const { user } = useAppSelector(getUserSelector);

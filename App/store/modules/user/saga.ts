@@ -1,4 +1,9 @@
-import { delay, put, takeLatest } from "redux-saga/effects";
+import {
+  TLoginUserWorker,
+  TLogoutUserWorker,
+  TRegisterUserWorker,
+} from "./types";
+import { all, delay, put, takeLatest } from "redux-saga/effects";
 
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
@@ -15,17 +20,7 @@ const {
   clearError,
 } = userActions;
 
-function* delayAndClearError() {
-  yield delay(3000);
-  yield put(clearError());
-}
-
-function* loginUserWorker({
-  payload,
-}: {
-  payload: Parameters<typeof LoginRequest>[0];
-  type: typeof LoginRequest.type;
-}) {
+function* loginUserWorker({ payload }: TLoginUserWorker) {
   try {
     const { email, password, authType } = payload;
     if (authType === "firebase" && email && password) {
@@ -41,7 +36,7 @@ function* loginUserWorker({
           .doc(user.id)
           .collection("tasks")
           .get();
-        yield console.log(checkRef._docs);
+
         if (checkRef._docs.length === 0) {
           yield firestore()
             .collection("users")
@@ -69,7 +64,8 @@ function* loginUserWorker({
   } catch (error) {
     if (error) {
       yield put(setAuthError("Auth error: " + error.toString()));
-      yield;
+      yield delay(3000);
+      yield put(clearError());
     } else {
       setAuthError("Auth error. Check your connection and try again");
       yield delay(3000);
@@ -78,12 +74,7 @@ function* loginUserWorker({
   }
 }
 
-function* registerUserWorker({
-  payload,
-}: {
-  payload: { email: string; password: string };
-  type: typeof RegisterRequest.type;
-}) {
+function* registerUserWorker({ payload }: TRegisterUserWorker) {
   try {
     const { email, password } = payload;
     const { user } = yield auth().createUserWithEmailAndPassword(
@@ -108,7 +99,7 @@ function* registerUserWorker({
     }
   }
 }
-export function* logoutUserWorker({}: { type: typeof logoutRequest.type }) {
+export function* logoutUserWorker({}: TLogoutUserWorker) {
   try {
     yield auth().signOut();
     yield GoogleSignin.signOut();
@@ -118,14 +109,18 @@ export function* logoutUserWorker({}: { type: typeof logoutRequest.type }) {
   }
 }
 
-export function* watchLogin() {
+function* watchLogin() {
   yield takeLatest(LoginRequest.type, loginUserWorker);
 }
 
-export function* watchRegister() {
+function* watchRegister() {
   yield takeLatest(RegisterRequest.type, registerUserWorker);
 }
 
-export function* watchLogout() {
+function* watchLogout() {
   yield takeLatest(logoutRequest.type, logoutUserWorker);
+}
+
+export function* userSaga() {
+  yield all([watchLogin(), watchRegister(), watchLogout()]);
 }

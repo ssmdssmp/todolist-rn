@@ -1,4 +1,10 @@
-import { delay, put, takeLatest } from "redux-saga/effects";
+import {
+  TChangeTaskStatusWorker,
+  TCreateNewTaskWorker,
+  TDeleteTaskWorker,
+  TTaskWorker,
+} from "./types";
+import { all, delay, put, takeLatest } from "redux-saga/effects";
 
 import { ITask } from "@/types";
 import firestore from "@react-native-firebase/firestore";
@@ -17,16 +23,7 @@ const {
   clearError,
 } = tasksActions;
 
-function* delayAndClearError() {
-  yield delay(3000);
-  yield put(clearError());
-}
-function* getTasksWorker({
-  payload,
-}: {
-  payload: Parameters<typeof getTasksRequest>[0];
-  type: typeof getTasksRequest.type;
-}) {
+function* getTasksWorker({ payload }: TTaskWorker) {
   try {
     const { uid } = payload;
     let tasksArr: ITask[] = [];
@@ -62,12 +59,7 @@ function* getTasksWorker({
   }
 }
 
-function* createNewTaskWorker({
-  payload,
-}: {
-  payload: Parameters<typeof CreateNewTaskRequest>[0];
-  type: typeof CreateNewTaskRequest.type;
-}) {
+function* createNewTaskWorker({ payload }: TCreateNewTaskWorker) {
   const { uid, newTask } = payload;
   try {
     const newTaskRef = yield firestore()
@@ -90,12 +82,7 @@ function* createNewTaskWorker({
   }
 }
 
-function* changeTaskStatusWorker({
-  payload,
-}: {
-  payload: Parameters<typeof updateTaskStatusRequest>[0];
-  type: typeof updateTaskStatusRequest.type;
-}) {
+function* changeTaskStatusWorker({ payload }: TChangeTaskStatusWorker) {
   const { uid, taskId, prevState } = payload;
   try {
     yield firestore()
@@ -118,12 +105,7 @@ function* changeTaskStatusWorker({
   }
 }
 
-function* deleteTaskWorker({
-  payload,
-}: {
-  payload: Parameters<typeof deleteTaskRequest>[0];
-  type: typeof deleteTaskRequest.type;
-}) {
+function* deleteTaskWorker({ payload }: TDeleteTaskWorker) {
   const { taskId, uid } = payload;
   try {
     yield firestore()
@@ -146,15 +128,24 @@ function* deleteTaskWorker({
   }
 }
 
-export function* watchGetChats() {
+function* watchGetChats() {
   yield takeLatest(getTasksRequest.type, getTasksWorker);
 }
-export function* watchCreateNewTask() {
+function* watchCreateNewTask() {
   yield takeLatest(CreateNewTaskRequest.type, createNewTaskWorker);
 }
-export function* watchChangeTaskStatus() {
+function* watchChangeTaskStatus() {
   yield takeLatest(updateTaskStatusRequest.type, changeTaskStatusWorker);
 }
-export function* watchDeleteTask() {
+function* watchDeleteTask() {
   yield takeLatest(deleteTaskRequest.type, deleteTaskWorker);
+}
+
+export function* tasksSaga() {
+  yield all([
+    watchGetChats(),
+    watchCreateNewTask(),
+    watchChangeTaskStatus(),
+    watchDeleteTask(),
+  ]);
 }

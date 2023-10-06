@@ -1,11 +1,13 @@
-import {SvgXml} from 'react-native-svg';
-import {styled} from 'styled-components/native';
+import { SvgXml } from "react-native-svg";
+import { styled } from "styled-components/native";
 
 export const ProfileText = styled.Text`
   margin-top: 15px;
 `;
 export const ProfileIcon = styled(SvgXml)`
   margin-top: 40%;
+  height: 50px;
+  width: 50px;
 `;
 
 export const LogoutButton = styled.Pressable`

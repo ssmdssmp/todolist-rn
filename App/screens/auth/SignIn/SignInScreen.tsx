@@ -9,6 +9,7 @@ import {
   ErrorText,
   ScreenWrapper,
 } from "@/components";
+import { LogoImage, StyledGoogleSignInButton } from "../styled";
 import React, { useState } from "react";
 import {
   getUserSelector,
@@ -17,8 +18,6 @@ import {
   userActions,
 } from "@/store";
 
-import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
-import { LogoImage } from "../styled";
 import { SIGN_UP_SCREEN_NAME } from "@/navigation";
 import { checkmarkCircle3d } from "@/assets";
 import { useNavigation } from "@react-navigation/native";
@@ -65,16 +64,7 @@ const SignUpScreen = () => {
       <AuthButton onPress={handleSignInButtonPress}>
         <AuthButtonText>Sign In</AuthButtonText>
       </AuthButton>
-      <GoogleSigninButton
-        style={{
-          width: "92%",
-          marginTop: 10,
-          borderRadius: 20,
-          height: 50,
-        }}
-        size={1}
-        onPress={handleGoogleButtonPress}
-      />
+      <StyledGoogleSignInButton size={1} onPress={handleGoogleButtonPress} />
       <ChangeAuthType>
         <ChangeAuthTypeText>Still don`t have an account?</ChangeAuthTypeText>
         <ChangeAuthTypeButton onPress={handleChangeAuthTypeButtonPress}>

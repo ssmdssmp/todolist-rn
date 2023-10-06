@@ -28,25 +28,17 @@ const FilterButtons = () => {
   const dispatch = useAppDispatch();
 
   const handleInProgressFilterPress = () => {
-    switch (filterMode) {
-      case "all":
-      case "onlyInProgress": {
-        return dispatch(tasksActions.setFilterMode("onlyDone"));
-      }
-      case "onlyDone": {
-        return dispatch(tasksActions.setFilterMode("all"));
-      }
+    if (filterMode === "all" || filterMode === "onlyInProgress") {
+      dispatch(tasksActions.setFilterMode("onlyDone"));
+    } else {
+      dispatch(tasksActions.setFilterMode("all"));
     }
   };
   const handleDoneFilterPress = () => {
-    switch (filterMode) {
-      case "all":
-      case "onlyDone": {
-        return dispatch(tasksActions.setFilterMode("onlyInProgress"));
-      }
-      case "onlyInProgress": {
-        return dispatch(tasksActions.setFilterMode("all"));
-      }
+    if (filterMode === "all" || filterMode === "onlyDone") {
+      dispatch(tasksActions.setFilterMode("onlyInProgress"));
+    } else {
+      dispatch(tasksActions.setFilterMode("all"));
     }
   };
 
